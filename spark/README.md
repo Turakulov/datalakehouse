@@ -1,6 +1,5 @@
-# Week 3 Spark Fundamentals training
 
-## Unit Testing PySpark Course Getting Started
+## Unit Testing PySpark
 
 You need to install the required dependencies in `requirements.txt`
 
