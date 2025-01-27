@@ -2,7 +2,7 @@ version: "3"
 
 services:
   spark-iceberg:
-    image: tabulario/spark-iceberg
+    #image: tabulario/spark-iceberg
     container_name: spark-iceberg
     build: spark/
     networks:
@@ -13,7 +13,8 @@ services:
     volumes:
       - ./warehouse:/home/iceberg/warehouse
       - ./notebooks:/home/iceberg/notebooks/notebooks
-      - ./data:/home/iceberg/data
+      - ./dags:/root/airflow/dags
+      - ./jobs:/root/airflow/jobs
     environment:
       - AWS_ACCESS_KEY_ID=admin
       - AWS_SECRET_ACCESS_KEY=password
@@ -24,6 +25,7 @@ services:
       - 10000:10000
       - 10001:10001
       - 4040-4042:4040-4042
+      - 8090:8090 # Ariflow Webserver Port
   rest:
     image: tabulario/iceberg-rest
     container_name: iceberg-rest
@@ -67,7 +69,6 @@ services:
     entrypoint: >
       /bin/sh -c "
       until (/usr/bin/mc config host add minio http://minio:9000 admin password) do echo '...waiting...' && sleep 1; done;
-      /usr/bin/mc rm -r --force minio/warehouse;
       /usr/bin/mc mb minio/warehouse;
       /usr/bin/mc policy set public minio/warehouse;
       tail -f /dev/null

@@ -1,0 +1,6 @@
+numpy
+pandas
+chispa
+pytest
+pyspark==3.5.1
+pyspark[sql]

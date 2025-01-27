@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  dbt:
+    container_name: dbt
+    image: ghcr.io/dbt-labs/dbt-snowflake:1.9.latest
+    build: .
+    volumes:
+      - .:/usr/app/dbt
+    ports:
+      - "8080:8080"
+    environment:
+      DBT_PROFILES_DIR: /usr/app/dbt
+      DBT_TARGET: dev
+    command: ["run"]

@@ -1,7 +1,6 @@
-# Apache Flink Training
-Week 4 Apache Flink Streaming Pipelines
+# Apache Flink 
 
-## :pushpin: Getting started 
+
 
 ### :whale: Installations
 
@@ -33,8 +32,8 @@ To run this repo, the following components will need to be installed:
 Clone/fork the repo and navigate to the root directory on your local computer.
 
 ```bash
-git clone https://github.com/DataExpert-io/data-engineer-handbook.git
-cd bootcamp/materials/4-apache-flink-training
+git clone https://github.com/.../.git
+cd datalakehouse/flink
 ```
 
 ### :dizzy: Configure credentials
@@ -52,13 +51,13 @@ cd bootcamp/materials/4-apache-flink-training
     ```
     
     ```bash
-   KAFKA_WEB_TRAFFIC_SECRET="<GET FROM bootcamp.techcreator.io or email>"
-   KAFKA_WEB_TRAFFIC_KEY="<GET FROM bootcamp.techcreator.io or email>
+   KAFKA_WEB_TRAFFIC_SECRET="<G>"
+   KAFKA_WEB_TRAFFIC_KEY="<>
    IP_CODING_KEY="MAKE AN ACCOUNT AT https://www.ip2location.io/ TO GET KEY"
    
-   KAFKA_GROUP=web-events
-   KAFKA_TOPIC=bootcamp-events-prod
-   KAFKA_URL=pkc-rgm37.us-west-2.aws.confluent.cloud:9092
+   KAFKA_GROUP=
+   KAFKA_TOPIC=
+   KAFKA_URL=aws.confluent.cloud:9092
    
    FLINK_VERSION=1.16.0
    PYTHON_VERSION=3.7.9
@@ -109,7 +108,7 @@ cd bootcamp/materials/4-apache-flink-training
 
     After about a minute, you should see a prompt that the job's been submitted (e.g., `Job has been submitted with JobID <job_id_number>`). Now go back to the [Flink UI](http://localhost:8081/#/job/running) to see the job running! :tada:
 
-4. Trigger an event from the Kafka source by visiting [https://bootcamp.techcreator.io/](https://bootcamp.techcreator.io/) and then query the `processed_events` table in your postgreSQL database to confirm the data/events were added.
+4. Trigger an event from the Kafka source and then query the `processed_events` table in your postgreSQL database to confirm the data/events were added.
 
     ```bash
     make psql
