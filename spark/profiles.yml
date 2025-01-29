@@ -1,0 +1,15 @@
+datalakehouse:
+  outputs:
+    dev:
+      type: vertica # Don't change this!
+      host: localhost
+      port: 5433
+      username: newdbadmin
+      password: vertica
+      database: VMart
+      schema: public
+      connection_load_balance: False
+      retries: 3
+      threads: 3
+      autocommit: True
+  target: dev

@@ -162,6 +162,6 @@ Targets:
   start                Starts all services in Docker compose
   clean                Stops and removes the Docker container as well as images with tag `<none>`
   psql                 Runs psql to query containerized postgreSQL database in CLI
-  postgres-die-mac     Removes mounted postgres data dir on local machine (mac users) and in Docker
-  postgres-die-pc      Removes mounted postgres data dir on local machine (PC users) and in Docker
+  postgres-die-mac     Removes mounted postgres vertica-data2 dir on local machine (mac users) and in Docker
+  postgres-die-pc      Removes mounted postgres vertica-data2 dir on local machine (PC users) and in Docker
 ```

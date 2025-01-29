@@ -1,0 +1,4 @@
+
+Run docker compose using:
+
+docker-compose --file ./docker-compose.yml --project-directory C:\Users\akram\PycharmProjects\datalakehouse\vertica up -d

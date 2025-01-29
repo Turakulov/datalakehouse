@@ -19,7 +19,7 @@ with open('metadata.pickle', 'wb') as handle:
 
 
 # synthesizer = HMASynthesizer(metadata)
-# synthesizer.fit(data)
+# synthesizer.fit(vertica-data2)
 #
 # synthetic_data = synthesizer.sample()
 # print(synthetic_data, type(synthetic_data))

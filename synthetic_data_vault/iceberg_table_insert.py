@@ -9,7 +9,7 @@ with open('data.pickle', 'rb') as handle:
 print(data.keys())
 print(data['Customers'] , type(data['Customers']))
 
-data['Customers'].to_csv('./data.csv')
+data['Customers'].to_csv('./vertica-data2.csv')
 
 # with open('metadata.pickle', 'rb') as handle:
 #     metadata = pickle.load(handle)
@@ -50,7 +50,7 @@ data['Customers'].to_csv('./data.csv')
 # PARTITIONED BY (day(DWH_Snapshot_DT))
 # """
 # )
-# df_spark = spark.createDataFrame(data['Customers'])
+# df_spark = spark.createDataFrame(vertica-data2['Customers'])
 #
 # df_spark.show()
 # df_spark.write.mode("append").saveAsTable("raw.customer")

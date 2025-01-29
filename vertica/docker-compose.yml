@@ -5,7 +5,7 @@ services:
       APP_DB_USER: "newdbadmin"
       APP_DB_PASSWORD: "vertica"
       TZ: "Europe/Moscow"
-    container_name: vertica-ce_v2
+    container_name: vertica-ce
     image: vertica/vertica-ce:latest
     ports:
       - "5433:5433"
@@ -15,6 +15,6 @@ services:
     volumes:
       - type: volume
         source: vertica-data2
-        target: /data
+        target: /vertica-data2
 volumes:
   vertica-data2:
