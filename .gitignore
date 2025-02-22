@@ -2,6 +2,7 @@
 airflow/logs
 airflow/airflow-*
 spark/.minio.sys
+spark/data/checkpoints/
 **/__init__.py
 dbt/target/
 dbt/logs/
