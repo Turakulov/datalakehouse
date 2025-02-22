@@ -1,1 +1,9 @@
-.idea
+.idea/
+airflow/logs
+airflow/airflow-*
+spark/.minio.sys
+**/__init__.py
+dbt/target/
+dbt/logs/
+synthetic_data_vault/*.json
+synthetic_data_vault/*.pickle
