@@ -22,6 +22,6 @@ try:
             elif msg.error():
                 raise KafkaException(msg.error())
         else:
-            print(f'Получено сообщение: {msg.value().decode("utf-8")}')
+            print(f'Получено сообщение: {msg.value().decode("utf-8")}  , {msg.timestamp()}')
 finally:
     consumer.close()

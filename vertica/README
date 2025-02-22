@@ -2,3 +2,6 @@
 Run docker compose using:
 
 docker-compose --file ./docker-compose.yml --project-directory C:\Users\akram\PycharmProjects\datalakehouse\vertica up -d
+
+
+docker network  connect datalakehouse_iceberg_net  vertica-ce

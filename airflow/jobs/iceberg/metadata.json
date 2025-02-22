@@ -1,0 +1,95 @@
+{
+    "tables": {
+        "Customers": {
+            "primary_key": "CustomerID",
+            "columns": {
+                "CustomerID": {
+                    "sdtype": "id"
+                },
+                "MiddleInitial": {
+                    "sdtype": "categorical"
+                },
+                "FirstName": {
+                    "sdtype": "categorical"
+                },
+                "LastName": {
+                    "sdtype": "categorical"
+                }
+            }
+        },
+        "Employees": {
+            "primary_key": "EmployeeID",
+            "columns": {
+                "MiddleInitial": {
+                    "sdtype": "categorical"
+                },
+                "FirstName": {
+                    "sdtype": "categorical"
+                },
+                "EmployeeID": {
+                    "sdtype": "id"
+                },
+                "LastName": {
+                    "sdtype": "categorical"
+                }
+            }
+        },
+        "Products": {
+            "primary_key": "ProductID",
+            "columns": {
+                "Name": {
+                    "sdtype": "categorical"
+                },
+                "Price": {
+                    "sdtype": "numerical",
+                    "computer_representation": "Float"
+                },
+                "ProductID": {
+                    "sdtype": "id"
+                }
+            }
+        },
+        "Sales": {
+            "primary_key": "SalesID",
+            "columns": {
+                "CustomerID": {
+                    "sdtype": "id"
+                },
+                "SalesPersonID": {
+                    "sdtype": "id"
+                },
+                "SalesID": {
+                    "sdtype": "id"
+                },
+                "ProductID": {
+                    "sdtype": "id"
+                },
+                "Quantity": {
+                    "sdtype": "numerical",
+                    "computer_representation": "Int64"
+                }
+            }
+        }
+    },
+    "relationships": [
+        {
+            "parent_table_name": "Customers",
+            "parent_primary_key": "CustomerID",
+            "child_table_name": "Sales",
+            "child_foreign_key": "CustomerID"
+        },
+        {
+            "parent_table_name": "Products",
+            "parent_primary_key": "ProductID",
+            "child_table_name": "Sales",
+            "child_foreign_key": "ProductID"
+        },
+        {
+            "parent_table_name": "Employees",
+            "parent_primary_key": "EmployeeID",
+            "child_table_name": "Sales",
+            "child_foreign_key": "SalesPersonID"
+        }
+    ],
+    "METADATA_SPEC_VERSION": "V1"
+}

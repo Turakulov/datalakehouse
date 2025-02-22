@@ -4,6 +4,8 @@ services:
     image: apache/kafka-native
     ports:
       - "9092:9092"
+    expose:
+      - "9093"
     environment:
       # Configure listeners for both docker and host communication
       KAFKA_LISTENERS: CONTROLLER://localhost:9091,HOST://0.0.0.0:9092,DOCKER://0.0.0.0:9093

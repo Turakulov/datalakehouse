@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: stage_employees
+    description: This model cleans up employees data
+    columns:
+      - name: EmployeeID
+        description: Primary key
+        tests:
+          - unique
+          - not_null

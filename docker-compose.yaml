@@ -1,4 +1,3 @@
-version: "3"
 
 services:
   spark-iceberg:
@@ -11,10 +10,11 @@ services:
       - rest
       - minio
     volumes:
-      - ./warehouse:/home/iceberg/warehouse
-      - ./notebooks:/home/iceberg/notebooks/notebooks
-      - ./dags:/root/airflow/dags
-      - ./jobs:/root/airflow/jobs
+      - ./spark/warehouse:/home/iceberg/warehouse
+      - ./spark/notebooks:/home/iceberg/notebooks
+      - ./spark/data:/home/iceberg/data
+      - ./airflow:/root/airflow
+      - ./dbt:/root/dbt
     environment:
       - AWS_ACCESS_KEY_ID=admin
       - AWS_SECRET_ACCESS_KEY=password
@@ -47,6 +47,8 @@ services:
       - MINIO_ROOT_USER=admin
       - MINIO_ROOT_PASSWORD=password
       - MINIO_DOMAIN=minio
+    volumes:
+      - ./spark:/data
     networks:
       iceberg_net:
         aliases:
@@ -54,7 +56,7 @@ services:
     ports:
       - 9001:9001
       - 9000:9000
-    command: ["server", "/vertica-data2", "--console-address", ":9001"]
+    command: ["server", "/data", "--console-address", ":9001"]
   mc:
     depends_on:
       - minio
@@ -73,5 +75,66 @@ services:
       /usr/bin/mc policy set public minio/warehouse;
       tail -f /dev/null
       "
+  kafka:
+    image: apache/kafka-native
+    ports:
+      - "9092:9092"
+    expose:
+      - "9093"
+    networks:
+      iceberg_net:
+    environment:
+      # Configure listeners for both docker and host communication
+      KAFKA_LISTENERS: CONTROLLER://localhost:9091,HOST://0.0.0.0:9092,DOCKER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: HOST://localhost:9092,DOCKER://kafka:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,DOCKER:PLAINTEXT,HOST:PLAINTEXT
+
+      # Settings required for KRaft mode
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9091
+
+      # Listener to use for broker-to-broker communication
+      KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER
+
+      # Required for a single node cluster
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  kafka-ui:
+    image: ghcr.io/kafbat/kafka-ui:latest
+    ports:
+      - 9999:8080
+    networks:
+      iceberg_net:
+    environment:
+      DYNAMIC_CONFIG_ENABLED: "true"
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9093
+    depends_on:
+      - kafka
+
+  vertica:
+    environment:
+      APP_DB_USER: "newdbadmin"
+      APP_DB_PASSWORD: "vertica"
+      TZ: "Europe/Moscow"
+    container_name: vertica-ce
+    image: vertica/vertica-ce:latest
+    ports:
+      - "5433:5433"
+      - "5444:5444"
+    expose:
+      - "5433"
+    networks:
+      iceberg_net:
+    deploy:
+      mode: global
+    volumes:
+      - type: volume
+        source: vertica-data2
+        target: /vertica-data2
 networks:
   iceberg_net:
+volumes:
+  vertica-data2:
