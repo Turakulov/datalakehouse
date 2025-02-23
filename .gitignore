@@ -8,6 +8,7 @@ spark/data/checkpoints/
 spark/warehouse/
 **/__init__.py
 dbt/target/
+!dbt/target/manifest.json
 dbt/logs/
 dbt/dbt_packages/
 synthetic_data_vault/*.json
