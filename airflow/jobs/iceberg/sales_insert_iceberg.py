@@ -2,24 +2,32 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, from_json, current_timestamp
 import json
 
-from pyspark.sql.types import IntegerType, StringType, StructType, StructField, FloatType, LongType
+from pyspark.sql.types import (
+    IntegerType,
+    StringType,
+    StructType,
+    StructField,
+    FloatType,
+    LongType,
+)
 
 kafka_servers = "kafka:9093"
 topic = "sales"
 database = "dwh"
 iceberg_table = "dwh.sales"
-checkpoint_location = '/home/iceberg/data/checkpoints'
+checkpoint_location = "/home/iceberg/data/checkpoints"
 
 spark = SparkSession.builder.appName(f"insert_iceberg_{topic}").getOrCreate()
 
-stream = spark.readStream \
-    .format("kafka") \
-    .option("kafka.bootstrap.servers", kafka_servers) \
-    .option("subscribe", topic) \
-    .option("startingOffsets", "earliest") \
-    .option("failOnDataLoss", False) \
-    .option('checkpointLocation', checkpoint_location) \
+stream = (
+    spark.readStream.format("kafka")
+    .option("kafka.bootstrap.servers", kafka_servers)
+    .option("subscribe", topic)
+    .option("startingOffsets", "earliest")
+    .option("failOnDataLoss", False)
+    .option("checkpointLocation", checkpoint_location)
     .load()
+)
 
 
 def get_kafka_message_schema(topic):
@@ -38,8 +46,7 @@ def get_kafka_message_schema(topic):
     # sample_json_df = spark.read.json(sample_df.rdd.map(lambda row: row.value))
     # # Получить схему данных
 
-
-    with open('/root/airflow/jobs/iceberg/metadata.json', 'r') as handle:
+    with open("/root/airflow/jobs/iceberg/metadata.json", "r") as handle:
         metadata = json.load(handle)
 
     data_dict = metadata["tables"][topic.capitalize()]["columns"]
@@ -55,17 +62,21 @@ def get_kafka_message_schema(topic):
             elif field_info.get("computer_representation") == "Int64":
                 return IntegerType()
             else:
-                raise ValueError(f"Unsupported computer_representation: {field_info.get('computer_representation')}")
+                raise ValueError(
+                    f"Unsupported computer_representation: {field_info.get('computer_representation')}"
+                )
         elif field_info["sdtype"] == "id":
             return LongType()
         else:
             raise ValueError(f"Unsupported sdtype: {field_info['sdtype']}")
 
     # Генерация StructType
-    message_schema = StructType([
-        StructField(field_name, get_spark_type(field_info), True)
-        for field_name, field_info in data_dict.items()
-    ])
+    message_schema = StructType(
+        [
+            StructField(field_name, get_spark_type(field_info), True)
+            for field_name, field_info in data_dict.items()
+        ]
+    )
 
     return message_schema
 
@@ -81,7 +92,7 @@ def generate_create_table_sql(schema, table_name) -> str:
         "BooleanType()": "BOOLEAN",
         "TimestampType()": "TIMESTAMP",
         "DateType()": "DATE",
-        "BinaryType()": "BINARY"
+        "BinaryType()": "BINARY",
     }
 
     # Генерация списка колонок
@@ -97,11 +108,13 @@ def generate_create_table_sql(schema, table_name) -> str:
     DWH_kafka_offset LONG,
     DWH_kafka_timestamp TIMESTAMP,
     DWH_load_timestamp TIMESTAMP,
-    """ + ",\n    ".join(columns)
+    """ + ",\n    ".join(
+        columns
+    )
     create_table_sql = f"""
     CREATE OR REPLACE TABLE {table_name} ({columns_sql}
-    ) 
-    USING iceberg 
+    )
+    USING iceberg
     PARTITIONED BY (day(DWH_kafka_timestamp))
     COMMENT 'Table description or task id'
     TBLPROPERTIES(
@@ -130,32 +143,30 @@ ensure_iceberg_table_exists(table_name=iceberg_table, message_schema=message_sch
 
 # Select and deserialize data
 df_deserialized = stream.select(
-    col("key").cast("string").alias("DWH_kafka_key"),   # Msg key
-    col("topic").alias("DWH_kafka_topic"),              # Topic
-    col("partition").alias("DWH_kafka_partition"),      # Kafka partition
-    col("offset").alias("DWH_kafka_offset"),            # Kafka offset
-    col("timestamp").alias("DWH_kafka_timestamp"),      # Msg timestamp
-    from_json(col("value").cast("string")
-              , message_schema).alias("json_value")     # JSON value
+    col("key").cast("string").alias("DWH_kafka_key"),  # Msg key
+    col("topic").alias("DWH_kafka_topic"),  # Topic
+    col("partition").alias("DWH_kafka_partition"),  # Kafka partition
+    col("offset").alias("DWH_kafka_offset"),  # Kafka offset
+    col("timestamp").alias("DWH_kafka_timestamp"),  # Msg timestamp
+    from_json(col("value").cast("string"), message_schema).alias(
+        "json_value"
+    ),  # JSON value
 ).select(
     "DWH_kafka_key",
     "DWH_kafka_partition",
     "DWH_kafka_offset",
     "DWH_kafka_timestamp",
     current_timestamp().alias("DWH_load_timestamp"),
-    "json_value.*"
+    "json_value.*",
 )
 
-df_deserialized.writeStream \
-    .format("iceberg") \
-    .outputMode("append") \
-    .trigger(once=True) \
-    .option("path", iceberg_table) \
-    .option("fanout-enabled", "true") \
-    .option("checkpointLocation", checkpoint_location) \
-    .toTable(iceberg_table) \
-    .awaitTermination()
-
+df_deserialized.writeStream.format("iceberg").outputMode("append").trigger(
+    once=True
+).option("path", iceberg_table).option("fanout-enabled", "true").option(
+    "checkpointLocation", checkpoint_location
+).toTable(
+    iceberg_table
+).awaitTermination()
 
 
 # query = df_deserialized.writeStream \

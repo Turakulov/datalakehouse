@@ -1,12 +1,17 @@
 import os
 from pyflink.datastream import StreamExecutionEnvironment
-from pyflink.table import EnvironmentSettings, DataTypes, TableEnvironment, StreamTableEnvironment
+from pyflink.table import (
+    EnvironmentSettings,
+    DataTypes,
+    TableEnvironment,
+    StreamTableEnvironment,
+)
 from pyflink.table.expressions import lit, col
 from pyflink.table.window import Tumble
 
 
 def create_aggregated_events_sink_postgres(t_env):
-    table_name = 'processed_events_aggregated'
+    table_name = "processed_events_aggregated"
     sink_ddl = f"""
         CREATE TABLE {table_name} (
             event_hour TIMESTAMP(3),
@@ -26,7 +31,7 @@ def create_aggregated_events_sink_postgres(t_env):
 
 
 def create_aggregated_events_referrer_sink_postgres(t_env):
-    table_name = 'processed_events_aggregated_source'
+    table_name = "processed_events_aggregated_source"
     sink_ddl = f"""
         CREATE TABLE {table_name} (
             event_hour TIMESTAMP(3),
@@ -44,6 +49,7 @@ def create_aggregated_events_referrer_sink_postgres(t_env):
     """
     t_env.execute_sql(sink_ddl)
     return table_name
+
 
 def create_processed_events_source_kafka(t_env):
     kafka_key = os.environ.get("KAFKA_WEB_TRAFFIC_KEY", "")
@@ -93,39 +99,30 @@ def log_aggregation():
 
         aggregated_table = create_aggregated_events_sink_postgres(t_env)
         aggregated_sink_table = create_aggregated_events_referrer_sink_postgres(t_env)
-        t_env.from_path(source_table)\
-            .window(
+        t_env.from_path(source_table).window(
             Tumble.over(lit(5).minutes).on(col("window_timestamp")).alias("w")
-        ).group_by(
-            col("w"),
-            col("host")
-        ) \
-            .select(
-                    col("w").start.alias("event_hour"),
-                    col("host"),
-                    col("host").count.alias("num_hits")
-            ) \
-            .execute_insert(aggregated_table)
+        ).group_by(col("w"), col("host")).select(
+            col("w").start.alias("event_hour"),
+            col("host"),
+            col("host").count.alias("num_hits"),
+        ).execute_insert(
+            aggregated_table
+        )
 
         t_env.from_path(source_table).window(
             Tumble.over(lit(5).minutes).on(col("window_timestamp")).alias("w")
-        ).group_by(
-            col("w"),
-            col("host"),
-            col("referrer")
-        ) \
-            .select(
+        ).group_by(col("w"), col("host"), col("referrer")).select(
             col("w").start.alias("event_hour"),
             col("host"),
             col("referrer"),
-            col("host").count.alias("num_hits")
-        ) \
-            .execute_insert(aggregated_sink_table) \
-            .wait()
+            col("host").count.alias("num_hits"),
+        ).execute_insert(
+            aggregated_sink_table
+        ).wait()
 
     except Exception as e:
         print("Writing records from Kafka to JDBC failed:", str(e))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     log_aggregation()

@@ -2,12 +2,12 @@ import vertica_python
 
 # Конфигурация подключения
 conn_info = {
-    'host': 'host.docker.internal',  # Адрес сервера Vertica
-    'port': 5433,                 # Порт (по умолчанию 5433)
-    'user': 'newdbadmin',       # Имя пользователя
-    'password': 'vertica',   # Пароль
-    'database': 'VMart',   # Имя базы данных
-    'autocommit': True             # Автофиксирование изменений
+    "host": "host.docker.internal",  # Адрес сервера Vertica
+    "port": 5433,  # Порт (по умолчанию 5433)
+    "user": "newdbadmin",  # Имя пользователя
+    "password": "vertica",  # Пароль
+    "database": "VMart",  # Имя базы данных
+    "autocommit": True,  # Автофиксирование изменений
 }
 
 
@@ -28,7 +28,7 @@ except Exception as e:
 
 finally:
     # Закрываем соединение
-    if 'connection' in locals():
+    if "connection" in locals():
         cursor.close()
         connection.close()
         print("Соединение закрыто.")

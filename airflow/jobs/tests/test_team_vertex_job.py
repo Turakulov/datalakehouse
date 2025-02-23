@@ -18,14 +18,14 @@ def test_vertex_generation(spark):
     expected_output = [
         TeamVertex(
             identifier=1,
-            type='team',
+            type="team",
             properties={
-                'abbreviation': 'GSW',
-                'nickname': 'Warriors',
-                'city': 'San Francisco',
-                'arena': 'Chase Center',
-                'year_founded': '1900'
-            }
+                "abbreviation": "GSW",
+                "nickname": "Warriors",
+                "city": "San Francisco",
+                "arena": "Chase Center",
+                "year_founded": "1900",
+            },
         )
     ]
     expected_df = spark.createDataFrame(expected_output)

@@ -1,5 +1,4 @@
-
-from sdv.datasets.demo import get_available_demos , download_demo
+from sdv.datasets.demo import get_available_demos, download_demo
 from sdv.multi_table import HMASynthesizer
 import pickle
 from faker import Faker
@@ -40,7 +39,7 @@ from faker import Faker
 # ])
 # print(metadata.tables.get('Customers').columns ,  type(metadata.tables.get('Customers').columns), type(dict(metadata.tables.get('Customers').columns)))
 
-with open('metadata.pickle', 'rb') as handle:
+with open("metadata.pickle", "rb") as handle:
     metadata = pickle.load(handle)
 
 # import json
@@ -51,7 +50,6 @@ print(metadata)
 # data_dict = metadata["tables"]["Customers"]["columns"]
 # for field_name, field_info in data_dict.items():
 #     print( field_name, field_info)
-
 
 
 # synthesizer = HMASynthesizer(metadata)

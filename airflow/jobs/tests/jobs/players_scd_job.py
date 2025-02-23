@@ -7,7 +7,7 @@ WITH streak_started AS (
            current_season,
            scoring_class,
            LAG(scoring_class, 1) OVER
-               (PARTITION BY player_name ORDER BY current_season) <> scoring_class       
+               (PARTITION BY player_name ORDER BY current_season) <> scoring_class
                OR LAG(scoring_class, 1) OVER
                (PARTITION BY player_name ORDER BY current_season) IS NULL
                AS did_change
@@ -45,10 +45,6 @@ def do_player_scd_transformation(spark, dataframe):
 
 
 def main():
-    spark = SparkSession.builder \
-      .master("local") \
-      .appName("players_scd") \
-      .getOrCreate()
+    spark = SparkSession.builder.master("local").appName("players_scd").getOrCreate()
     output_df = do_player_scd_transformation(spark, spark.table("players"))
     output_df.write.mode("overwrite").insertInto("players_scd")
-
