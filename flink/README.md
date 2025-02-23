@@ -1,4 +1,4 @@
-# Apache Flink 
+# Apache Flink
 
 
 
@@ -9,7 +9,7 @@ To run this repo, the following components will need to be installed:
 1. [Docker](https://docs.docker.com/get-docker/) (required)
 2. [Docker compose](https://docs.docker.com/compose/install/#installation-scenarios) (required)
 3. Make (recommended) -- see below
-    - On most Linux distributions and macOS, `make` is typically pre-installed by default. To check if `make` is installed on your system, you can run the `make --version` command in your terminal or command prompt. If it's installed, it will display the version information. 
+    - On most Linux distributions and macOS, `make` is typically pre-installed by default. To check if `make` is installed on your system, you can run the `make --version` command in your terminal or command prompt. If it's installed, it will display the version information.
     - Otherwise, you can try following the instructions below, or you can just copy+paste the commands from the `Makefile` into your terminal or command prompt and run manually.
 
         ```bash
@@ -49,19 +49,19 @@ cd datalakehouse/flink
     ```bash
     vim flink-env.env
     ```
-    
+
     ```bash
    KAFKA_WEB_TRAFFIC_SECRET="<G>"
    KAFKA_WEB_TRAFFIC_KEY="<>
    IP_CODING_KEY="MAKE AN ACCOUNT AT https://www.ip2location.io/ TO GET KEY"
-   
+
    KAFKA_GROUP=
    KAFKA_TOPIC=
    KAFKA_URL=aws.confluent.cloud:9092
-   
+
    FLINK_VERSION=1.16.0
    PYTHON_VERSION=3.7.9
-   
+
    POSTGRES_URL="jdbc:postgresql://host.docker.internal:5432/postgres"
    JDBC_BASE_URL="jdbc:postgresql://host.docker.internal:5432"
    POSTGRES_USER=postgres
@@ -120,7 +120,7 @@ cd datalakehouse/flink
     Type "help" for help.
 
     postgres=# SELECT COUNT(*) FROM processed_events;
-    count 
+    count
     -------
     739
     (1 row)
