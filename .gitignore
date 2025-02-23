@@ -1,10 +1,13 @@
 .idea/
 airflow/logs
 airflow/airflow-*
+airflow/jobs/iceberg/metadata.json
 spark/.minio.sys
 spark/data/checkpoints/
+spark/warehouse/
 **/__init__.py
 dbt/target/
 dbt/logs/
+dbt/dbt_packages/
 synthetic_data_vault/*.json
 synthetic_data_vault/*.pickle
