@@ -13,3 +13,4 @@ dbt/logs/
 dbt/dbt_packages/
 synthetic_data_vault/*.json
 synthetic_data_vault/*.pickle
+postgres/pgdata/

@@ -133,7 +133,35 @@ services:
       - type: volume
         source: vertica-data2
         target: /vertica-data2
+
+  postgres:
+    image: postgres:17
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: postgres_user
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_DB: postgres_db
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432"
+    networks:
+      iceberg_net:
+    volumes:
+      - ./postgres/pgdata:/var/lib/postgresql/data/pgdata
+    command: >
+      postgres -c max_connections=1000
+               -c shared_buffers=256MB
+               -c effective_cache_size=768MB
+               -c maintenance_work_mem=64MB
+               -c checkpoint_completion_target=0.7
+               -c wal_buffers=16MB
+               -c default_statistics_target=100
+
 networks:
   iceberg_net:
 volumes:
   vertica-data2:
+  pgdata:
+    driver: local
