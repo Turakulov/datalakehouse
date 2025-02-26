@@ -17,7 +17,11 @@ database = "dwh"
 iceberg_table = "dwh.products"
 checkpoint_location = "/home/iceberg/data/checkpoints"
 
-spark = SparkSession.builder.appName(f"insert_iceberg_{topic}").getOrCreate()
+spark = (
+    SparkSession.builder.appName(f"insert_iceberg_{topic}")
+    .config("spark.default.parallelism", "10")
+    .getOrCreate()
+)
 
 stream = (
     spark.readStream.format("kafka")
