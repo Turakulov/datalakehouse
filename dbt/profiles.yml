@@ -1,15 +1,13 @@
 datalakehouse:
   outputs:
     dev:
-      type: vertica # Don't change this!
+      type: postgres
       host: host.docker.internal
-      port: 5433
-      username: newdbadmin
-      password: vertica
-      database: VMart
+      user: postgres_user
+      password: postgres_password
+      port: 5432
+      dbname: postgres_db
       schema: public
-      connection_load_balance: False
-      retries: 3
       threads: 3
-      autocommit: True
+      keepalives_idle: 0 # default 0, indicating the system default
   target: dev

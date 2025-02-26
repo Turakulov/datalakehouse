@@ -3,7 +3,7 @@ FROM tabulario/spark-iceberg
 
 RUN apt-get update && apt-get install nano
 RUN pip install 'apache-airflow[spark]==2.10.2' --constraint 'https://raw.githubusercontent.com/apache/airflow/constraints-2.10.2/constraints-3.8.txt'
-RUN pip install dbt-core==1.7.3 dbt-vertica==1.7.3 dbt-tests-adapter==1.7.3
+RUN pip install dbt-core dbt-postgres dbt-tests-adapter
 
 ## Adding custom Airflow config for example DAGs disabling
 #ADD ../airflow/airflow.cfg /root/airflow/airflow.cfg
