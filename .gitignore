@@ -3,9 +3,10 @@ airflow/logs
 airflow/dags/__pycache__/
 airflow/airflow-*
 airflow/jobs/iceberg/metadata.json
-spark/.minio.sys
+minio/.minio.sys
+minio/warehouse/
 spark/data/checkpoints/
-spark/warehouse/
+spark/warehouse/*
 **/__init__.py
 dbt/target/*
 !dbt/target/manifest.json

@@ -1,12 +1,11 @@
 services:
   spark-iceberg:
-    #image: tabulario/spark-iceberg
     container_name: spark-iceberg
     build: spark/
     networks:
-      iceberg_net:
+      datalakehouse_net:
     depends_on:
-      - rest
+      - nessie
       - minio
     volumes:
       - ./spark/warehouse:/home/iceberg/warehouse
@@ -19,26 +18,35 @@ services:
       - AWS_SECRET_ACCESS_KEY=password
       - AWS_REGION=us-east-1
     ports:
-      - 8888:8888
-      - 8080:8080
-      - 10000:10000
-      - 10001:10001
-      - 4040-4042:4040-4042
+      - 8080:8080 # Master Web UI
+      - 7077:7077 # Master Port for job submissions
+      - 8081:8081 # Worker Web UI
+      - 4040-4045:4040-4045 # Additional Spark job UI ports for more jobs
+      - 18080:18080 # Spark History Server
+      - 8888:8888 # Jupyter Notebook
       - 8090:8090 # Ariflow Webserver Port
-  rest:
-    image: tabulario/iceberg-rest
-    container_name: iceberg-rest
-    networks:
-      iceberg_net:
-    ports:
-      - 8181:8181
+
+  nessie:
+    image: projectnessie/nessie:latest
+    container_name: nessie
     environment:
-      - AWS_ACCESS_KEY_ID=admin
-      - AWS_SECRET_ACCESS_KEY=password
-      - AWS_REGION=us-east-1
-      - CATALOG_WAREHOUSE=s3://warehouse/
-      - CATALOG_IO__IMPL=org.apache.iceberg.aws.s3.S3FileIO
-      - CATALOG_S3_ENDPOINT=http://minio:9000
+      - QUARKUS_PROFILE=prod
+      - QUARKUS_HTTP_PORT=19120
+      - QUARKUS_LOG_CONSOLE_FORMAT=%d{yyyy-MM-dd HH:mm:ss} %-5p [%c{1.}] (%t) %s%e%n
+      - QUARKUS_LOG_LEVEL=INFO
+      - QUARKUS_DATASOURCE_DB_KIND=rocksdb
+      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:rocksdb:file:///nessie/data
+      - QUARKUS_DATASOURCE_USERNAME=nessie
+      - QUARKUS_DATASOURCE_PASSWORD=nessie
+    volumes:
+      - ./nessie/nessie_data:/nessie/data # Mount local directory to persist RocksDB data
+    ports:
+      - "19120:19120" # Expose Nessie API port
+    expose:
+      - "19120"
+    networks:
+      datalakehouse_net:
+
   minio:
     image: minio/minio
     container_name: minio
@@ -46,10 +54,12 @@ services:
       - MINIO_ROOT_USER=admin
       - MINIO_ROOT_PASSWORD=password
       - MINIO_DOMAIN=minio
+      - MINIO_REGION_NAME=us-east-1
+      - MINIO_REGION=us-east-1
     volumes:
-      - ./spark:/data
+      - ./minio:/data
     networks:
-      iceberg_net:
+      datalakehouse_net:
         aliases:
           - warehouse.minio
     ports:
@@ -62,7 +72,7 @@ services:
     image: minio/mc
     container_name: mc
     networks:
-      iceberg_net:
+      datalakehouse_net:
     environment:
       - AWS_ACCESS_KEY_ID=admin
       - AWS_SECRET_ACCESS_KEY=password
@@ -81,7 +91,7 @@ services:
     expose:
       - "9093"
     networks:
-      iceberg_net:
+      datalakehouse_net:
     environment:
       # Configure listeners for both docker and host communication
       KAFKA_LISTENERS: CONTROLLER://localhost:9091,HOST://0.0.0.0:9092,DOCKER://0.0.0.0:9093
@@ -105,7 +115,7 @@ services:
     ports:
       - 9999:8080
     networks:
-      iceberg_net:
+      datalakehouse_net:
     environment:
       DYNAMIC_CONFIG_ENABLED: "true"
       KAFKA_CLUSTERS_0_NAME: local
@@ -126,7 +136,7 @@ services:
     expose:
       - "5433"
     networks:
-      iceberg_net:
+      datalakehouse_net:
     deploy:
       mode: global
     volumes:
@@ -147,7 +157,7 @@ services:
     expose:
       - "5432"
     networks:
-      iceberg_net:
+      datalakehouse_net:
     volumes:
       - ./postgres/pgdata:/var/lib/postgresql/data/pgdata
     command: >
@@ -160,7 +170,7 @@ services:
                -c default_statistics_target=100
 
 networks:
-  iceberg_net:
+  datalakehouse_net:
 volumes:
   vertica-data2:
   pgdata:

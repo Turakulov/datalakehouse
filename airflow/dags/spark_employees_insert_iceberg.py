@@ -1,5 +1,3 @@
-# Filename: spark_submit_dag.py
-
 from datetime import datetime
 from airflow import DAG
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
@@ -8,21 +6,20 @@ from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOpe
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
-    "start_date": datetime(2023, 9, 28),  # Replace with your preferred start date
+    "start_date": datetime(2025, 3, 6),
 }
 
 # Define the DAG
 dag = DAG(
-    dag_id="aaa_spark",
+    dag_id="spark_employees_insert_iceberg",
     default_args=default_args,
-    description="Submit a PySpark job using SparkSubmitOperator",
+    description="Submit a PySpark job for Iceberg table update using SparkSubmitOperator",
     schedule_interval=None,
     catchup=False,
 )
 
 
-# Define the SparkSubmitOperator
-ingest_permits_task = SparkSubmitOperator(
+ingest_task = SparkSubmitOperator(
     task_id="ingest_permits",
     application="/root/airflow/jobs/iceberg/employees_insert_iceberg.py",
     conn_id="spark_default",
@@ -30,4 +27,4 @@ ingest_permits_task = SparkSubmitOperator(
     dag=dag,
 )
 
-ingest_permits_task
+ingest_task

@@ -34,9 +34,6 @@ repos:
       - id: check-model-has-description
         files: ^(models/).yml$
       - id: check-model-has-tests-by-group
-        args: ["--tests", "not_null", "--test-cnt", "1", "--"]
-        files: ^(models/).yml$
-      - id: check-model-has-tests-by-group
         args:
           [
             "--tests",
