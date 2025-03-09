@@ -1,9 +1,11 @@
 import json
 import pickle
-from confluent_kafka import Producer
-import logging
 import uuid
-from sdv.datasets.demo import get_available_demos, download_demo
+import logging
+from confluent_kafka import Producer
+from confluent_kafka.admin import AdminClient, NewTopic
+
+# from sdv.datasets.demo import get_available_demos, download_demo
 from confluent_kafka import Consumer, TopicPartition
 
 CONFIG = {
@@ -39,8 +41,33 @@ def execute_producer(producer, topic: str, data: str):
 # with open('metadata.json', 'w') as handle:
 #     json.dump(metadata, handle)
 
+
+def check_topic_existance(topic_name):
+    # Определить конфигурацию темы
+    topic_config = {
+        "cleanup.policy": "delete",
+        "retention.ms": "2419200000",  # 4 недели
+    }
+
+    admin_client = AdminClient(CONFIG)
+    topic_metadata = admin_client.list_topics()
+    if topic_metadata.topics.get(topic_name) is None:
+        # Создать экземпляр NewTopic
+        new_topic = NewTopic(
+            topic_name, num_partitions=1, replication_factor=1, config=topic_config
+        )
+        # Создать топик с помощью AdminClient
+        admin_client.create_topics([new_topic])
+
+
 with open("data.pickle", "rb") as handle:
     data = pickle.load(handle)
+
+
+check_topic_existance("employees")
+check_topic_existance("customers")
+check_topic_existance("products")
+check_topic_existance("sales")
 
 producer = Producer(CONFIG)
 for i in range(data["Employees"].shape[0]):
@@ -48,11 +75,15 @@ for i in range(data["Employees"].shape[0]):
         producer=producer, topic="employees", data=data["Employees"].iloc[i].to_json()
     )
 
-# for i in range(data['Customers'].shape[0]):
-#     execute_producer(producer=producer, topic='customers', data=data['Customers'].iloc[i].to_json())
-#
-# for i in range(data['Products'].shape[0]):
-#     execute_producer(producer=producer, topic='products', data=data['Products'].iloc[i].to_json())
-#
+for i in range(data["Customers"].shape[0]):
+    execute_producer(
+        producer=producer, topic="customers", data=data["Customers"].iloc[i].to_json()
+    )
+
+for i in range(data["Products"].shape[0]):
+    execute_producer(
+        producer=producer, topic="products", data=data["Products"].iloc[i].to_json()
+    )
+
 # for i in range(data['Sales'].shape[0]):
 #     execute_producer(producer=producer, topic='sales', data=data['Sales'].iloc[i].to_json())

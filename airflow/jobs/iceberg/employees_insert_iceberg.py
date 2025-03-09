@@ -128,13 +128,15 @@ def generate_create_table_sql(schema, table_name) -> str:
     return create_table_sql
 
 
-def ensure_iceberg_table_exists(table_name, message_schema):
+def ensure_iceberg_table_exists(table_name, message_schema, database):
     # try:
     #     # Попытка чтения из таблицы для проверки её существования
     #     # spark.sql(f"SELECT 1 FROM {table_name} LIMIT 1")
     # except:
     # Если таблицы нет, создаём её
-    spark.sql(f"DROP TABLE IF EXISTS {table_name} PURGE")
+    spark.sql(f"CREATE DATABASE IF NOT EXISTS {database}")
+    # spark.sql(f"DROP TABLE IF EXISTS {table_name} PURGE")
+
     print(f"Recreating Iceberg table: {table_name}")
     create_table_sql = generate_create_table_sql(message_schema, table_name)
     print(create_table_sql)
@@ -143,7 +145,9 @@ def ensure_iceberg_table_exists(table_name, message_schema):
 
 message_schema = get_kafka_message_schema(topic=topic)
 print(message_schema)
-ensure_iceberg_table_exists(table_name=iceberg_table, message_schema=message_schema)
+ensure_iceberg_table_exists(
+    table_name=iceberg_table, message_schema=message_schema, database=database
+)
 
 # Select and deserialize data
 df_deserialized = stream.select(

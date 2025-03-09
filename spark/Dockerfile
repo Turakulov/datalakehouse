@@ -2,7 +2,7 @@ FROM tabulario/spark-iceberg
 
 RUN apt-get update && apt-get install nano
 RUN pip install 'apache-airflow[spark]==2.10.2' --constraint 'https://raw.githubusercontent.com/apache/airflow/constraints-2.10.2/constraints-3.8.txt'
-RUN pip install dbt-core dbt-postgres dbt-tests-adapter
+RUN pip install dbt-core dbt-trino dbt-vertica dbt-tests-adapter
 
 ## Adding custom Airflow config for example DAGs disabling
 ADD /airflow.cfg /root/airflow/airflow.cfg
@@ -25,6 +25,3 @@ COPY /spark-defaults.conf /opt/spark/conf/spark-defaults.conf
 
 #RUN dbt init -s datalakehouse
 #CMD ["dbt", "init", "-s", "datalakehouse"]
-
-#ADD entrypoint.sh /usr/local/bin/entrypoint.sh
-#ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
