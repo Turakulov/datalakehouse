@@ -8,7 +8,6 @@ services:
       - nessie
       - minio
     volumes:
-      - ./spark/warehouse:/home/iceberg/warehouse
       - ./spark/notebooks:/home/iceberg/notebooks
       - ./spark/data:/home/iceberg/data
       - ./airflow:/root/airflow
@@ -26,26 +25,47 @@ services:
       - 8888:8888 # Jupyter Notebook
       - 8090:8090 # Ariflow Webserver Port
 
+  trino:
+    image: trinodb/trino:latest
+    container_name: trino
+    networks:
+      datalakehouse_net:
+    depends_on:
+      - nessie
+      - minio
+    ports:
+      - 8083:8080
+    expose:
+      - "8083"
+    environment:
+      - TRINO_NODE_ID=trino
+      - TRINO_DATA_DIR=/data
+    volumes:
+      - ./trino/data:/data
+      - ./trino/catalog:/etc/trino/catalog:ro
+
   nessie:
     image: projectnessie/nessie:latest
     container_name: nessie
     environment:
-      - QUARKUS_PROFILE=prod
       - QUARKUS_HTTP_PORT=19120
+      - QUARKUS_PROFILE=prod
       - QUARKUS_LOG_CONSOLE_FORMAT=%d{yyyy-MM-dd HH:mm:ss} %-5p [%c{1.}] (%t) %s%e%n
       - QUARKUS_LOG_LEVEL=INFO
-      - QUARKUS_DATASOURCE_DB_KIND=rocksdb
-      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:rocksdb:file:///nessie/data
-      - QUARKUS_DATASOURCE_USERNAME=nessie
-      - QUARKUS_DATASOURCE_PASSWORD=nessie
+      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://nessie-db:5432/postgres_db
+      - QUARKUS_DATASOURCE_USERNAME=postgres_user
+      - QUARKUS_DATASOURCE_PASSWORD=postgres_password
+      - NESSIE_VERSION_STORE_TYPE=JDBC
     volumes:
-      - ./nessie/nessie_data:/nessie/data # Mount local directory to persist RocksDB data
+      - ./nessie/nessie_data:/var/lib/nessie/data # Mount local directory to persist nessie data
     ports:
       - "19120:19120" # Expose Nessie API port
     expose:
       - "19120"
     networks:
       datalakehouse_net:
+    depends_on:
+      - nessie-db
 
   minio:
     image: minio/minio
@@ -66,6 +86,7 @@ services:
       - 9001:9001
       - 9000:9000
     command: ["server", "/data", "--console-address", ":9001"]
+
   mc:
     depends_on:
       - minio
@@ -84,6 +105,7 @@ services:
       /usr/bin/mc policy set public minio/warehouse;
       tail -f /dev/null
       "
+
   kafka:
     image: apache/kafka-native
     ports:
@@ -144,9 +166,9 @@ services:
         source: vertica-data2
         target: /vertica-data2
 
-  postgres:
+  nessie-db:
     image: postgres:17
-    container_name: postgres_container
+    container_name: nessie-db
     environment:
       POSTGRES_USER: postgres_user
       POSTGRES_PASSWORD: postgres_password
