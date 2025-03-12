@@ -11,16 +11,16 @@ default_args = {
 
 # Define the DAG
 dag = DAG(
-    dag_id="spark_sales_insert_iceberg",
+    dag_id="kafka_to_iceberg_sales",
     default_args=default_args,
     description="Submit a PySpark job for Iceberg table update using SparkSubmitOperator",
     schedule_interval=None,
     catchup=False,
+    tag=["iceberg", "raw"],
 )
 
-
 ingest_task = SparkSubmitOperator(
-    task_id="ingest_permits",
+    task_id="ingest_task",
     application="/root/airflow/jobs/iceberg/sales_insert_iceberg.py",
     conn_id="spark_default",
     verbose=True,
