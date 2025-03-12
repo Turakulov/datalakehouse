@@ -13,8 +13,8 @@ from pyspark.sql.types import (
 
 kafka_servers = "kafka:9093"
 topic = "products"
-database = "dwh"
-iceberg_table = "dwh.products"
+database = "raw"
+iceberg_table = f"{database}.products"
 checkpoint_location = "/home/iceberg/data/checkpoints"
 
 spark = (
