@@ -16,7 +16,7 @@ dag = DAG(
     description="Submit a PySpark job for Iceberg table update using SparkSubmitOperator",
     schedule_interval=None,
     catchup=False,
-    tag=["iceberg", "raw"],
+    tags=["iceberg", "raw"],
 )
 
 ingest_task = SparkSubmitOperator(
