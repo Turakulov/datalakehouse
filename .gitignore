@@ -1,8 +1,8 @@
 .idea/
 airflow/logs
 airflow/dags/__pycache__/
-airflow/dbt_venv
-airflow/dags/dbt
+airflow/dbt_venv/*
+airflow/dags/dbt/*
 airflow/airflow-*
 airflow/jobs/iceberg/metadata.json
 minio/.minio.sys
