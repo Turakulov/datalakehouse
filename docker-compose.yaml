@@ -11,7 +11,6 @@ services:
       - ./spark/notebooks:/home/iceberg/notebooks
       - ./spark/data:/home/iceberg/data
       - ./airflow:/root/airflow
-      - ./dbt:/root/dbt
     environment:
       - AWS_ACCESS_KEY_ID=admin
       - AWS_SECRET_ACCESS_KEY=password

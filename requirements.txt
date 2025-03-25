@@ -54,3 +54,8 @@ tzdata==2024.2
 urllib3==2.3.0
 virtualenv==20.29.2
 wcwidth==0.2.13
+
+pip~=25.0.1
+wheel~=0.45.1
+setuptools~=75.8.0
+aiokafka~=0.12.0
