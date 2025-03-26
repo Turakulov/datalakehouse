@@ -84,23 +84,26 @@ async def produce_data():
     producer = AIOKafkaProducer(bootstrap_servers=CONFIG["bootstrap.servers"])
     await producer.start()
 
-    semaphore = asyncio.Semaphore(SEMAPHORE_LIMIT)
+    # semaphore = asyncio.Semaphore(SEMAPHORE_LIMIT)
 
-    async def limited_produce(topic_name, json_data):
-        async with semaphore:
-            await execute_producer(producer, topic_name, json_data)
+    # async def limited_produce(topic_name, json_data):
+    #     async with semaphore:
+    #         await execute_producer(producer, topic_name, json_data)
 
     try:
         tasks = []
         for t in TOPICS:
             for i in range(data[t.capitalize()].shape[0]):
-                tasks.append(
-                    limited_produce(
-                        topic_name=t, json_data=data[t.capitalize()].iloc[i].to_json()
-                    )
+                await execute_producer(
+                    producer, t, data[t.capitalize()].iloc[i].to_json()
                 )
+                # tasks.append(
+                #     limited_produce(
+                #         topic_name=t, json_data=
+                #     )
+                # )
 
-        await asyncio.gather(*tasks)
+        # await asyncio.gather(*tasks)
     finally:
         await producer.stop()
 
