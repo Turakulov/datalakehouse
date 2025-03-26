@@ -3,7 +3,7 @@ FROM tabulario/spark-iceberg
 RUN apt-get update && apt-get install nano
 RUN pip install --upgrade pip
 RUN pip install 'apache-airflow[spark]==2.10.2' --constraint 'https://raw.githubusercontent.com/apache/airflow/constraints-2.10.2/constraints-3.8.txt'
-RUN pip install astronomer-cosmos
+RUN pip install astronomer-cosmos apache-airflow-providers-trino
 RUN python -m venv dbt_venv && . dbt_venv/bin/activate && pip install --no-cache-dir dbt-core dbt-trino dbt-vertica dbt-tests-adapter && deactivate
 
 
