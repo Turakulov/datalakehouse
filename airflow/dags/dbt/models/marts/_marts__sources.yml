@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: marts
+    description: Schema for marts tables
+    loader: Manual
+    database: vertica
+    schema: marts
+    tables:
+      - name: fct_sales

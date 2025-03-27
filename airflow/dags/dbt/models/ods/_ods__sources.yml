@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: ods
+    description: Schema for ODS tables
+    loader: Manual
+    database: nessie
+    schema: ods
+    tables:
+      - name: products
+      - name: employees
+      - name: customers
+      - name: sales

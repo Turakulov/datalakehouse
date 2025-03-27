@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: ods_customers
+    description: This model cleans up customers data
+    columns:
+      - name: CustomerID
+        description: Primary key
+        tests:
+          - unique
+          - not_null

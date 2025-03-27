@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: raw
+    description: Schema for RAW tables
+    loader: Manual
+    database: nessie
+    schema: raw
+    tables:
+      - name: products
+      - name: employees
+      - name: customers
+      - name: sales
