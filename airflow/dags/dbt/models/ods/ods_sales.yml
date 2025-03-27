@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: ods_sales
+    description: This model cleans up sales data
+    columns:
+      - name: SalesID
+        description: Primary key
+        tests:
+          - unique
+          - not_null

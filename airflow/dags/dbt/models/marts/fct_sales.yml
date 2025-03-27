@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: fct_sales
+    description: This model cleans up fct_sales datamart
+    columns:
+      - name: SalesID
+        description: Primary key
+        tests:
+          - unique
+          - not_null

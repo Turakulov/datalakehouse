@@ -23,8 +23,11 @@ from faker import Faker
 # with open('metadata.pickle', 'wb') as handle:
 #     pickle.dump(metadata, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-# with open('data.pickle', 'rb') as handle:
-#     data = pickle.load(handle)
+with open('data.pickle', 'rb') as handle:
+    data = pickle.load(handle)
+
+print(data['Sales'].shape[0])
+
 # data_dict  = metadata.tables.get('Customers').columns
 # # Маппинг sdtype на PySpark типы
 # sdtype_to_spark_type = {
@@ -39,14 +42,14 @@ from faker import Faker
 # ])
 # print(metadata.tables.get('Customers').columns ,  type(metadata.tables.get('Customers').columns), type(dict(metadata.tables.get('Customers').columns)))
 
-with open("metadata.pickle", "rb") as handle:
-    metadata = pickle.load(handle)
+# with open("metadata.pickle", "rb") as handle:
+#     metadata = pickle.load(handle)
 
 # import json
 # with open('metadata.json', 'r') as handle:
 #     metadata = json.load(handle)
 
-print(metadata)
+# print(metadata)
 # data_dict = metadata["tables"]["Customers"]["columns"]
 # for field_name, field_info in data_dict.items():
 #     print( field_name, field_info)
