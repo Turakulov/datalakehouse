@@ -91,20 +91,21 @@ docker-compose up -d
 
 ## 🛠️ **Project Structure**  
 ```bash
-📂 data-lakehouse
+📂 datalakehouse
 ├── 📂 airflow/        # Apache Airflow DAGs
-├── 📂 dbt/            # DBT models
 ├── 📂 spark/          # Spark Streaming jobs
 ├── 📂 kafka/          # Kafka configurations
 ├── 📂 trino/          # Trino catalogs
 ├── 📂 minio/          # Minio storage setup
 ├── 📂 nessie/         # Apache Nessie metadata
+├── 📂 postgres/       # Postgres storage setup for Apache Iceberg metadata
+├── 📂 vertica/        # Vertica storage setup for datamarts and OLAP queries
 ├── 📜 docker-compose.yaml  # Docker environment
 └── 📜 README.md       # Project documentation
 ```
 
 ## 📌 **Contributing**
-🔹 Fork the repo & create a feature branch.
-🔹 Submit a pull request with detailed changes.
+🔹 Fork the repo & create a feature branch.  
+🔹 Submit a pull request with detailed changes.  
 
 
