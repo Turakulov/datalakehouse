@@ -7,7 +7,6 @@ airflow/dags/dbt/target/*
 airflow/dags/dbt/logs/
 airflow/dags/dbt/dbt_packages/
 airflow/dags/dbt/package-lock.yml
-airflow/dags/dbt/packages.yml
 airflow/dags/dbt/profiles.yml
 airflow/dags/dbt/.user.yml
 !dbt/target/manifest.json
