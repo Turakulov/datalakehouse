@@ -11,25 +11,24 @@
 
 
 select
-      now()             as DWH_LMD_timestamp
-    , s.SalesID         as ProductID
+    cast(now() as DATE)   as DWH_LMD_timestamp
+    , s.SalesID         as SalesID
     , s.CustomerID      as CustomerID
     , s.SalesPersonID   as SalesPersonID
     , s.ProductID       as ProductID
     , s.Quantity        as ProductQuantity
-    , p.Price           as ProductPrice
-    , s.Quantity * p.Price as TotalPrice
     , p.Name            as ProductName
+    , p.Price           as ProductPrice
     , c.LastName        as CustomerLastName
     , c.FirstName       as CustomerFirstName
     , c.MiddleInitial   as CustomerMiddleInitial
     , e.LastName        as SalesPersonLastName
     , e.FirstName       as SalesPersonFirstName
     , e.MiddleInitial   as SalesPersonMiddleInitial
-from {{ ref('ods', 'ods_sales') }} as s
-left join {{ ref('ods', 'ods_customers') }} as c
+from nessie.ods.ods_sales as s
+left join nessie.ods.ods_customers as c
 on s.CustomerID = c.CustomerID
-left join {{ ref('ods', 'ods_employees') }} as e
+left join nessie.ods.ods_employees as e
 on s.SalesPersonID = e.EmployeeID
-left join {{ ref('ods', 'ods_products') }} as p
+left join nessie.ods.ods_products as p
 on s.ProductID = p.ProductID
