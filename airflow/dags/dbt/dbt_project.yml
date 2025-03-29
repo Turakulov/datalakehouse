@@ -29,6 +29,8 @@ vars:
   iceberg_catalog: nessie
   iceberg_raw_schema: raw
   iceberg_ods_schema: ods
+  vertica_catalog: vertica
+  vertica_marts_schema: marts
 
 # In this example config, we tell dbt to build all models in the example/
 # directory as views. These settings can be overridden in the individual model
