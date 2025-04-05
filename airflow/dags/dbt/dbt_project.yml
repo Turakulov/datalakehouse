@@ -40,7 +40,9 @@ models:
     # Config indicated by + and applies to all files under models/example/
     raw:
       +materialized: table
+      +views_enabled: false
     ods:
       +materialized: table
+      +views_enabled: false
     marts:
       +materialized: table
