@@ -5,7 +5,10 @@
         materialized="table",
         database="vertica",
         schema="marts",
-        sort="SalesID"
+        order_by="SalesID",
+        segmented_by_string="SalesID",
+        partition_by_string='DWH_LMD_timestamp',
+        depends_on=['ods_sales', 'ods_customers','ods_employees','ods_products']
     )
 }}
 
